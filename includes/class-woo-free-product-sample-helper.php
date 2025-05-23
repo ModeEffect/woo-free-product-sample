@@ -97,19 +97,22 @@ class Woo_Free_Product_Sample_Helper {
 		return TRUE;
 	}
 
-	/**
-	 * Check product quantity is in cart
-	 *
-	 * @since    2.0.0
-	 * @param    none
-	 */
-	public static function wfps_cart_total( ) {
+    /**
+     * Check product quantity is in cart
+     *
+     * @param null|integer $product_id
+     * @param null|integer $updated_quantity
+     * @return int|mixed
+     * @since    2.0.0
+     */
+	public static function wfps_cart_total( $product_id = null, $updated_quantity = null) {
 
 		global $woocommerce;
 		$total = 0;
 		foreach( $woocommerce->cart->get_cart() as $key => $val ) {
 			if( isset( $val['free_sample'] ) ) {
-				$total += $val['quantity'];
+                $quantity = $product_id && $updated_quantity ? $updated_quantity : $val['quantity'];
+				$total += $quantity;
 			}
 		}
 		return $total;

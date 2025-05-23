@@ -487,7 +487,7 @@ class Woo_Free_Product_Sample_Public {
 
 			} else if( 'all' == $notice_type ) {
 
-				if( ( isset( $values['free_sample'] ) ) && ( $setting_options['max_qty_per_order'] <= \Woo_Free_Product_Sample_Helper::wfps_cart_total() ) ) {
+				if( ( isset( $values['free_sample'] ) ) && ( $setting_options['max_qty_per_order'] < \Woo_Free_Product_Sample_Helper::wfps_cart_total($values['product_id'], $updated_quantity) ) ) {
 					if( get_locale() == 'ja' ) {
 						wc_add_notice( esc_html__( 'サンプル商品を最大で注文できます '.$setting_options['max_qty_per_order'].' 注文あたりの数量。', 'woo-free-product-sample' ), 'error' );
 					} else {
@@ -597,6 +597,29 @@ class Woo_Free_Product_Sample_Public {
 		}
 
 		return $subtotal;
+	}
+
+    /**
+     * Set Quantity Input Max Value
+     *
+     * @param array $args
+     * @param $product
+     * @return array
+     * @since      2.3.2
+     */
+	public function wfps_set_quantity_input_max( $args, $product ) {
+        $cart = WC()->cart->get_cart(); // Get cart items
+        $current_product_id = $product->get_id();
+        $setting_options   = \Woo_Free_Product_Sample_Helper::wfps_settings();
+        if ( ! empty( $cart ) ) {
+            foreach ( $cart as $cart_item_key => $cart_item ) {
+                if ( isset( $cart_item['free_sample'] ) && $cart_item['free_sample'] == $current_product_id ) {
+                    $args['max_value'] = !empty($setting_options['max_qty_per_order']) ? $setting_options['max_qty_per_order'] : $args['max_value'];
+                    break;
+                }
+            }
+        }
+		return $args;
 	}
 
 	/**
