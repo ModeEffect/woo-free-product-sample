@@ -6,7 +6,7 @@ Tested up to: 6.1.1
 WC requires at least: 3.1
 WC tested up to: 7.5.1
 Requires PHP: 5.6
-Stable tag: 2.3.1
+Stable tag: 2.3.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -114,6 +114,9 @@ This section describes how to install the plugin and get it working.
 5. Save/update product details
 
 == Changelog ==
+#### 2.3.3
+* Fix max value bug when Maximum Limit Type is set to Order and apply max input value in UI
+
 #### 2.3.2
 * Added HPOS support to the plugin
 
