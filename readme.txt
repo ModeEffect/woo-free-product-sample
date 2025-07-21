@@ -114,6 +114,9 @@ This section describes how to install the plugin and get it working.
 5. Save/update product details
 
 == Changelog ==
+#### 2.3.4
+* Prevent Adding Free Product sample twice in one click
+
 #### 2.3.3
 * Fix max value bug when Maximum Limit Type is set to Order and apply max input value in UI
 
