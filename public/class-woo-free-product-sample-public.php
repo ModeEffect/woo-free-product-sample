@@ -407,14 +407,36 @@ class Woo_Free_Product_Sample_Public {
 	}
 
 	/**
-	 * Display validation message when order a product sample
+	 * This also prevent duplicate product added in short period of time.
 	 *
-	 * @since      2.0.0
-	 * @param      int, array
+	 * This function enforces a cooldown period between attempts to add the same product to the cart,
+	 * and also applies quantity limits based on plugin settings. Displays a notice and redirects back
+	 * to the product page if the user exceeds the allowed limit.
+	 *
+	 * @param bool   $valid         Whether the product can be added to the cart (initial state).
+	 * @param int    $product_id    ID of the product being added.
+	 * @param int    $quantity      Quantity of the product being added.
+	 * @param int    $variation_id  Optional. ID of the product variation (default is 0).
+	 * @param mixed  $variations    Optional. Additional variation data (default is null).
+	 *
+	 * @return bool  Returns false if cooldown is triggered or limit exceeded, otherwise returns the original $valid value.
 	 */
-	public function wfps_set_limit_per_order( $valid, $product_id ) {
+	public function wfps_set_limit_per_order( $valid, $product_id, $quantity, $variation_id = 0, $variations = null ) {
 
 		global $woocommerce;
+		$key = 'recent_add_' . ($variation_id ?: $product_id);
+
+		$now = time();
+		$cooldown_seconds = 5;
+
+        // Get the last added timestamp
+		$last_added = WC()->session->get($key);
+
+		if ($last_added && ($now - $last_added) < $cooldown_seconds) {
+			return false;
+		}
+		// Update timestamp in session
+		WC()->session->set($key, $now);
 		$setting_options   = \Woo_Free_Product_Sample_Helper::wfps_settings();
 		$notice_type 	   = isset( $setting_options['limit_per_order'] ) ? $setting_options['limit_per_order'] : null;
 		$disable_limit 	   = isset( $setting_options['disable_limit_per_order'] ) ? $setting_options['disable_limit_per_order'] : null;
