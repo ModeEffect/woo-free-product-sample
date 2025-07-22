@@ -469,7 +469,7 @@ class Woo_Free_Product_Sample_Public {
 
 			if( 'product' == $notice_type ) {
 
-				if( ( $values['free_sample'] == $values['product_id'] ) && ( $setting_options['max_qty_per_order'] < $updated_quantity ) ) {
+				if( isset( $values['free_sample'] ) &&  ( $values['free_sample'] == $values['product_id'] ) && ( $setting_options['max_qty_per_order'] < $updated_quantity ) ) {
 
 					if( get_locale() == "ja" ) {
 						wc_add_notice( esc_html__( '注文できます '.$product->get_name().' 最大 '.$setting_options['max_qty_per_order'].'  注文ごと。', 'woo-free-product-sample' ), 'error' );
