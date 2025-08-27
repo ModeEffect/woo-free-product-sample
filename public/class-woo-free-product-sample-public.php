@@ -630,6 +630,9 @@ class Woo_Free_Product_Sample_Public {
      * @since      2.3.2
      */
 	public function wfps_set_quantity_input_max( $args, $product ) {
+		if ( function_exists( 'WC' ) && null === WC()->cart ) {
+			WC()->initialize_cart();
+		}
         $cart = WC()->cart->get_cart(); // Get cart items
         $current_product_id = $product->get_id();
         $setting_options   = \Woo_Free_Product_Sample_Helper::wfps_settings();
@@ -729,6 +732,9 @@ remove_filter( 'woocommerce_get_item_data', array( $price_calculator, 'display_p
 	 * @param      array
 	 */
 	public function wfps_check_cart_items() {
+		if ( function_exists( 'WC' ) && null === WC()->cart ) {
+			WC()->initialize_cart();
+		}
 		if( ! is_admin() ) {
 			if ( class_exists('WC_Min_Max_Quantities') && WC()->cart->get_cart_contents_count() != 0 ) {
 				foreach ( WC()->cart->get_cart() as $cart_item_key => $values ) {
@@ -748,6 +754,9 @@ remove_filter( 'woocommerce_get_item_data', array( $price_calculator, 'display_p
 	 * @param      array
 	 */
 	public function wfps_cart_exclude( $exclude, $checking_id, $cart_item_key, $values ) {
+		if ( function_exists( 'WC' ) && null === WC()->cart ) {
+			WC()->initialize_cart();
+		}
 		if ( class_exists('WC_Min_Max_Quantities') ) {
 			foreach ( WC()->cart->get_cart() as $cart_item_key => $values ) {
 				if(isset($values['free_sample']) && $values['free_sample'] == $values['product_id']) {
