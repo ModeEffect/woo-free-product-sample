@@ -6,7 +6,7 @@ Tested up to: 6.1.1
 WC requires at least: 3.1
 WC tested up to: 7.5.1
 Requires PHP: 5.6
-Stable tag: 2.4
+Stable tag: 2.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -114,6 +114,9 @@ This section describes how to install the plugin and get it working.
 5. Save/update product details
 
 == Changelog ==
+#### 2.5
+* FIX: PHP fatal error when cart no initialized 
+
 #### 2.4
 * DEV: Added FSE Theme Support
 * FIX: PHP Warning on missing array key
