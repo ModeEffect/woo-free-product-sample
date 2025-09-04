@@ -630,17 +630,22 @@ class Woo_Free_Product_Sample_Public {
      * @since      2.3.2
      */
 	public function wfps_set_quantity_input_max( $args, $product ) {
-        $cart = WC()->cart->get_cart(); // Get cart items
-        $current_product_id = $product->get_id();
-        $setting_options   = \Woo_Free_Product_Sample_Helper::wfps_settings();
-        if ( ! empty( $cart ) ) {
-            foreach ( $cart as $cart_item_key => $cart_item ) {
-                if ( isset( $cart_item['free_sample'] ) && $cart_item['free_sample'] == $current_product_id ) {
-                    $args['max_value'] = !empty($setting_options['max_qty_per_order']) ? $setting_options['max_qty_per_order'] : $args['max_value'];
-                    break;
-                }
-            }
-        }
+		if ( function_exists( 'WC' )) {
+			if(null === WC()->cart){
+				WC()->initialize_cart();
+			}
+			$cart = WC()->cart->get_cart(); // Get cart items
+			$current_product_id = $product->get_id();
+			$setting_options   = \Woo_Free_Product_Sample_Helper::wfps_settings();
+			if ( ! empty( $cart ) ) {
+				foreach ( $cart as $cart_item_key => $cart_item ) {
+					if ( isset( $cart_item['free_sample'] ) && $cart_item['free_sample'] == $current_product_id ) {
+						$args['max_value'] = !empty($setting_options['max_qty_per_order']) ? $setting_options['max_qty_per_order'] : $args['max_value'];
+						break;
+					}
+				}
+			}
+		}
 		return $args;
 	}
 
@@ -723,13 +728,15 @@ remove_filter( 'woocommerce_get_item_data', array( $price_calculator, 'display_p
 	}
 
 	/**
-	 * Check WooCommerce min/max quantities validation message
+	 * Unset all notices.
 	 *
 	 * @since      2.0.0
-	 * @param      array
 	 */
 	public function wfps_check_cart_items() {
-		if( ! is_admin() ) {
+		if ( function_exists( 'WC' ) && ! is_admin()) {
+			if(null === WC()->cart){
+				WC()->initialize_cart();
+			}
 			if ( class_exists('WC_Min_Max_Quantities') && WC()->cart->get_cart_contents_count() != 0 ) {
 				foreach ( WC()->cart->get_cart() as $cart_item_key => $values ) {
 					if(isset($values['free_sample']) && $values['free_sample'] == $values['product_id']) {
@@ -738,23 +745,27 @@ remove_filter( 'woocommerce_get_item_data', array( $price_calculator, 'display_p
 				}
 			}
 		}
-
 	}
 
 	/**
 	 * Check WooCommerce min/max quantities validation message
 	 *
 	 * @since      2.0.0
-	 * @param      array
 	 */
 	public function wfps_cart_exclude( $exclude, $checking_id, $cart_item_key, $values ) {
-		if ( class_exists('WC_Min_Max_Quantities') ) {
-			foreach ( WC()->cart->get_cart() as $cart_item_key => $values ) {
-				if(isset($values['free_sample']) && $values['free_sample'] == $values['product_id']) {
-					return 'yes';
+		if ( function_exists( 'WC' )) {
+			if(null === WC()->cart){
+				WC()->initialize_cart();
+			}
+			if ( class_exists('WC_Min_Max_Quantities') ) {
+				foreach ( WC()->cart->get_cart() as $cart_item_key => $values ) {
+					if(isset($values['free_sample']) && $values['free_sample'] == $values['product_id']) {
+						return 'yes';
+					}
 				}
 			}
 		}
+		return $exclude;
 	}
 
 	/**
