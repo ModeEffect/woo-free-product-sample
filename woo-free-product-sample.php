@@ -6,6 +6,7 @@
  *
  * @wordpress-plugin
  * Plugin Name:       Free Product Sample for WooCommerce
+ * Requires Plugins: woocommerce
  * Plugin URI:        https://wordpress.org/plugins/woo-free-product-sample
  * Description:       It allows customers to order a product sample in a simple way.
  * Version:           2.5

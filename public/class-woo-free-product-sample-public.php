@@ -630,19 +630,24 @@ class Woo_Free_Product_Sample_Public {
      * @since      2.3.2
      */
 	public function wfps_set_quantity_input_max( $args, $product ) {
-		if ( function_exists( 'WC' )) {
-			if(null === WC()->cart){
-				WC()->initialize_cart();
-			}
-			$cart = WC()->cart->get_cart(); // Get cart items
-			$current_product_id = $product->get_id();
-			$setting_options   = \Woo_Free_Product_Sample_Helper::wfps_settings();
-			if ( ! empty( $cart ) ) {
-				foreach ( $cart as $cart_item_key => $cart_item ) {
-					if ( isset( $cart_item['free_sample'] ) && $cart_item['free_sample'] == $current_product_id ) {
-						$args['max_value'] = !empty($setting_options['max_qty_per_order']) ? $setting_options['max_qty_per_order'] : $args['max_value'];
-						break;
-					}
+		if ( ! did_action( 'woocommerce_init' ) ) {
+			return $args;
+		}
+		if( function_exists( 'wc_load_cart' ) && null === WC()->cart ) {
+			wc_load_cart();
+		}
+
+		if( ! ( WC()->cart instanceof \WC_Cart ) ) {
+			return $args;
+		}
+		$cart = WC()->cart->get_cart(); // Get cart items
+		$current_product_id = $product->get_id();
+		$setting_options   = \Woo_Free_Product_Sample_Helper::wfps_settings();
+		if ( ! empty( $cart ) ) {
+			foreach ( $cart as $cart_item_key => $cart_item ) {
+				if ( isset( $cart_item['free_sample'] ) && $cart_item['free_sample'] == $current_product_id ) {
+					$args['max_value'] = !empty($setting_options['max_qty_per_order']) ? $setting_options['max_qty_per_order'] : $args['max_value'];
+					break;
 				}
 			}
 		}
@@ -733,15 +738,20 @@ remove_filter( 'woocommerce_get_item_data', array( $price_calculator, 'display_p
 	 * @since      2.0.0
 	 */
 	public function wfps_check_cart_items() {
-		if ( function_exists( 'WC' ) && ! is_admin()) {
-			if(null === WC()->cart){
-				WC()->initialize_cart();
-			}
-			if ( class_exists('WC_Min_Max_Quantities') && WC()->cart->get_cart_contents_count() != 0 ) {
-				foreach ( WC()->cart->get_cart() as $cart_item_key => $values ) {
-					if(isset($values['free_sample']) && $values['free_sample'] == $values['product_id']) {
-						wc_clear_notices();
-					}
+		if ( ! did_action( 'woocommerce_init' ) ) {
+			return;
+		}
+		if( function_exists( 'wc_load_cart' ) && null === WC()->cart ) {
+			wc_load_cart();
+		}
+
+		if( ! ( WC()->cart instanceof \WC_Cart ) ) {
+			return;
+		}
+		if ( class_exists('WC_Min_Max_Quantities') && WC()->cart->get_cart_contents_count() != 0 ) {
+			foreach ( WC()->cart->get_cart() as $cart_item_key => $values ) {
+				if(isset($values['free_sample']) && $values['free_sample'] == $values['product_id']) {
+					wc_clear_notices();
 				}
 			}
 		}
