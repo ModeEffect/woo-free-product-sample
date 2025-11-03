@@ -3,11 +3,14 @@
     <?php
     $settings = \Woo_Free_Product_Sample_Helper::wfps_settings();
     $all_selected = '';
-    if ( !isset( $settings['enable_product'] ) || '0' == $settings['enable_product'][0] ) {
-        $all_selected = 'selected';
+    if ( !isset( $settings[$value['name']] ) || '0' == $settings[$value['name']][0] ) {
+	    $all_selected = 'selected';
+        if('required_product' == $value['name'] && !isset( $settings[$value['name']] )) {
+	        $all_selected = '';
+        }
     }
     ?>
-    <option value="" <?php echo $all_selected; ?>><?php esc_html_e( 'All', 'woo-free-product-sample' ); ?></option>
+    <option value="0" <?php echo $all_selected; ?>><?php esc_html_e( 'All', 'woo-free-product-sample' ); ?></option>
     <?php
 
         foreach( $value['default'] as $val ) :

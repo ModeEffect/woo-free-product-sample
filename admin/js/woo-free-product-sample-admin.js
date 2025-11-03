@@ -46,6 +46,8 @@ jQuery(function ($) {
             $(".wfps_tab").removeClass('wfps_tab_active');
             $(this).parent().find(".wfps_tab").addClass('wfps_tab_active');
         });
-    });    
+        $("#enable_product").selectWoo();
+        $("#required_product").selectWoo();
+    });
     
 });

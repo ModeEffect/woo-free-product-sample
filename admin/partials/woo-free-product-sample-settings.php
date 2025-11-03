@@ -71,10 +71,11 @@
 												</th>
 												<td>
 													<?php
-													$file_name = isset( $value['type'] ) ? $value['type'] : 'text';
+													$file_name = isset( $value['name'] ) ? $value['name'] : 'enable_product';
+													$file_type = isset( $value['type'] ) ? $value['type'] : 'text';
 
-													if( $file_name ) {
-														include WFPS_ADMIN_DIR_PATH . 'includes/fields/'. $file_name .'.php';
+													if( $file_type ) {
+														include WFPS_ADMIN_DIR_PATH . 'includes/fields/'. $file_type .'.php';
 													}
 													if( isset($value['is_pro']) && $value['is_pro'] == true && !\Woo_Free_Product_Sample_Helper::is_pro()) {
 													?>
