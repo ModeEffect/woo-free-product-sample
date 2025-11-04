@@ -115,7 +115,7 @@ class Woo_Free_Product_Sample_Settings {
                                             array(
                                                 'name'          => 'sample_price',
                                                 'label'         => __( 'Sample Price', 'woo-free-product-sample-pro' ),
-                                                'class'         => 'widefat',
+                                                'class'         => 'widefat currency',
                                                 'type'          => 'number',
                                                 'description'   => __( 'Set Sample Price', 'woo-free-product-sample-pro' ),
                                                 'placeholder'   => '0.00',
@@ -126,7 +126,7 @@ class Woo_Free_Product_Sample_Settings {
                                             array(
                                                 'name'          => 'required_cart_total',
                                                 'label'         => __( 'Required Cart Total Amount', 'woo-free-product-sample-pro' ),
-                                                'class'         => 'widefat',
+                                                'class'         => 'widefat currency',
                                                 'type'          => 'number',
                                                 'description'   => __( 'Set Required Cart Total Amount', 'woo-free-product-sample-pro' ),
                                                 'placeholder'   => '0.00',
@@ -152,7 +152,7 @@ class Woo_Free_Product_Sample_Settings {
 			                                    'type'          => 'number',
 			                                    'class'         => 'widefat',
 			                                    'description'   => __( 'Set Required Product Count', 'woo-free-product-sample' ),
-			                                    'placeholder'   => 1,
+			                                    'placeholder'   => 0,
 			                                    'style'			=> 'class="max_qty_per_order_area"',
 			                                    'position'		=> 'tr'
 		                                    ),
