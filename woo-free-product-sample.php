@@ -9,7 +9,7 @@
  * Requires Plugins: woocommerce
  * Plugin URI:        https://wordpress.org/plugins/woo-free-product-sample
  * Description:       It allows customers to order a product sample in a simple way.
- * Version:           2.5.1
+ * Version:           2.5.2
  * Author:            AMP-MODE
  * Author URI:        https://amplifyplugins.com
  * License:           GPL-2.0+
@@ -18,10 +18,10 @@
  * Domain Path:       /languages
  * Requires PHP:      5.6
  * Requires at least: 4.4
- * Tested up to:      6.6.1
+ * Tested up to:      6.8.3
  *
  * WC requires at least: 3.1
- * WC tested up to:   9.2.3
+ * WC tested up to:   10.3.4
  * License: GNU General Public License v3.0
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html
 */
@@ -31,7 +31,7 @@ if ( ! defined( 'WPINC' ) ) {
     die;
 }
 
-define( 'WFPS_VERSION', '2.5.1' );
+define( 'WFPS_VERSION', '2.5.2' );
 define( 'WFPS_MINIMUM_PHP_VERSION', '5.6.0' );
 define( 'WFPS_MINIMUM_WP_VERSION', '4.4' );
 define( 'WFPS_MINIMUM_WC_VERSION', '3.1' );
