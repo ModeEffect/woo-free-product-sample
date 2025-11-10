@@ -114,6 +114,9 @@ This section describes how to install the plugin and get it working.
 5. Save/update product details
 
 == Changelog ==
+#### 2.5.2
+* Added: Required conditions for sample button to show
+
 #### 2.5.1
 * FIX: Additional fixes on checks for cart loaded
 

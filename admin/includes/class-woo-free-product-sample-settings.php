@@ -115,7 +115,7 @@ class Woo_Free_Product_Sample_Settings {
                                             array(
                                                 'name'          => 'sample_price',
                                                 'label'         => __( 'Sample Price', 'woo-free-product-sample-pro' ),
-                                                'class'         => 'widefat',
+                                                'class'         => 'widefat currency',
                                                 'type'          => 'number',
                                                 'description'   => __( 'Set Sample Price', 'woo-free-product-sample-pro' ),
                                                 'placeholder'   => '0.00',
@@ -123,6 +123,39 @@ class Woo_Free_Product_Sample_Settings {
                                                 'is_pro'        => true,
                                                 'disabled'      => true
                                             ),
+                                            array(
+                                                'name'          => 'required_cart_total',
+                                                'label'         => __( 'Required Cart Total Amount', 'woo-free-product-sample-pro' ),
+                                                'class'         => 'widefat currency',
+                                                'type'          => 'number',
+                                                'description'   => __( 'Set Required Cart Total Amount', 'woo-free-product-sample-pro' ),
+                                                'placeholder'   => '0.00',
+                                                'value'			=> 0.00,
+                                                'is_pro'        => true,
+                                                'disabled'      => true
+                                            ),
+		                                    array(
+			                                    'name'          => 'required_product',
+			                                    'label'         => __( 'Required Products', 'woo-free-product-sample-pro' ),
+			                                    'class'         => 'widefat wfps-hight-400',
+			                                    'type'          => 'multi-select',
+			                                    'description'   => __( 'Set Required Products', 'woo-free-product-sample-pro' ),
+			                                    'default'		=> \Woo_Free_Product_Sample_Helper::wfps_products(),
+			                                    'style'			=> 'class="wfps-enable-product-area"',
+			                                    'position'		=> 'tr',
+			                                    'is_pro'        => true,
+			                                    'disabled'      => true
+		                                    ),
+		                                    array(
+			                                    'name'          => 'required_product_count',
+			                                    'label'         => __( 'Required Product Count', 'woo-free-product-sample' ),
+			                                    'type'          => 'number',
+			                                    'class'         => 'widefat',
+			                                    'description'   => __( 'Set Required Product Count', 'woo-free-product-sample' ),
+			                                    'placeholder'   => 0,
+			                                    'style'			=> 'class="max_qty_per_order_area"',
+			                                    'position'		=> 'tr'
+		                                    ),
                                             array(
                                                 'name'          => 'exclude_shop_page',
                                                 'label'         => __( 'Hide in Shop/Categories Page', 'woo-free-product-sample-pro' ),
