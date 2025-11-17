@@ -800,4 +800,18 @@ remove_filter( 'woocommerce_get_item_data', array( $price_calculator, 'display_p
 		// return $echo;
     }
 
+	/**
+	 * Modify hidden post meta keys to include "Free sample for".
+	 *
+	 * @param array $hidden_keys An array of meta keys that are hidden.
+	 *
+	 * @return  array  Updated array of hidden meta keys.
+	 */
+	public function wfps_hidden_sample_meta( $hidden_keys ) {
+
+		// Hide the meta key "Free sample for"
+		$hidden_keys[] = 'Free sample for';
+
+		return $hidden_keys;
+	}
 }
