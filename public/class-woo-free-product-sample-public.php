@@ -811,7 +811,23 @@ remove_filter( 'woocommerce_get_item_data', array( $price_calculator, 'display_p
 
 		// Hide the meta key "Free sample for"
 		$hidden_keys[] = 'Free sample for';
+		$hidden_keys[] = 'free sample for';
 
 		return $hidden_keys;
+	}
+
+	/**
+	 * Hide specific item meta everywhere if the value contains "Free sample for".
+	 */
+	function wfps_hide_sample_meta( $formatted_meta, $item ) {
+
+		foreach ( $formatted_meta as $meta_id => $meta ) {
+
+			if ( stripos( $meta->key, 'Free sample for' ) === 0 ) {
+				unset( $formatted_meta[ $meta_id ] ); // remove the meta completely
+			}
+		}
+
+		return $formatted_meta;
 	}
 }
