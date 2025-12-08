@@ -817,12 +817,27 @@ remove_filter( 'woocommerce_get_item_data', array( $price_calculator, 'display_p
 	}
 
 	/**
-	 * Hide specific item meta everywhere if the value contains "Free sample for".
+	 * Remove specific sample metadata from formatted meta array.
+	 *
+	 * @param array $formatted_meta Array of formatted meta data.
+	 * @param object $item The item object containing meta data.
+	 *
+	 * @return array Filtered meta data with specific entries removed.
 	 */
-	function wfps_hide_sample_meta( $formatted_meta, $item ) {
+	public function wfps_hide_sample_meta( $formatted_meta, $item ) {
+
+		// Ensure the data is an array before looping
+		if ( ! is_array( $formatted_meta ) || empty( $formatted_meta ) ) {
+			return $formatted_meta;
+		}
 
 		foreach ( $formatted_meta as $meta_id => $meta ) {
 
+			// make sure key exists
+			if ( ! isset( $meta->key ) ) {
+				continue;
+			}
+			
 			if ( stripos( $meta->key, 'Free sample for' ) === 0 ) {
 				unset( $formatted_meta[ $meta_id ] ); // remove the meta completely
 			}
