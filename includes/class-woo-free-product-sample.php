@@ -174,6 +174,7 @@ class Woo_Free_Product_Sample {
 		$this->loader->add_filter( 'wc_min_max_quantity_minmax_do_not_count', $plugin_public, 'wfps_cart_exclude', 10, 4 );
 		$this->loader->add_filter( 'wc_min_max_quantity_minmax_cart_exclude', $plugin_public, 'wfps_cart_exclude', 10, 4 );
 		$this->loader->add_filter( 'woocommerce_hidden_order_itemmeta', $plugin_public, 'wfps_hidden_sample_meta' );
+		$this->loader->add_filter( 'woocommerce_order_item_get_formatted_meta_data', $plugin_public, 'wfps_hide_sample_meta', 10, 2 );
 
 	}
 
