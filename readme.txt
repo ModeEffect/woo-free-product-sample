@@ -6,7 +6,7 @@ Tested up to: 6.8.3
 WC requires at least: 3.1
 WC tested up to: 10.3.4
 Requires PHP: 5.6
-Stable tag: 2.5.3
+Stable tag: 2.5.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -114,6 +114,9 @@ This section describes how to install the plugin and get it working.
 5. Save/update product details
 
 == Changelog ==
+#### 2.5.4
+* Remove specific sample metadata from formatted meta array
+
 #### 2.5.3
 * Make "Free Sample For" meta key on order items hidden
 
