@@ -18,8 +18,11 @@ if( class_exists( 'BeRocket_MM_Quantity' ) ) {
 
     function check_product_sample_is_added_in_cart() {
 	    if ( function_exists( 'WC' )) {
-			if(null === WC()->cart){
-				WC()->initialize_cart();
+			if ( ! ( WC()->cart instanceof \WC_Cart ) && function_exists( 'wc_load_cart' ) ) {
+				wc_load_cart();
+			}
+			if ( ! ( WC()->cart instanceof \WC_Cart ) ) {
+				return false;
 			}
 		    foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
 			    if( isset( $cart_item['free_sample'] ) && isset( $cart_item['sample_price'] ) ) {
