@@ -60,7 +60,8 @@ class Woo_Free_Product_Sample_Helper {
 	 */
 	public static function wfps_is_in_stock() {
         global $product;
-        return $product->is_in_stock();
+
+        return $product instanceof \WC_Product ? $product->is_in_stock() : false;
 	}
 
 	/**
@@ -71,16 +72,25 @@ class Woo_Free_Product_Sample_Helper {
 	 */
 	public static function wfps_check_sample_is_in_cart( $product_id ) {
 
-		global $woocommerce;
 		$setting_options   = self::wfps_settings();
 		$disable_limit 	   = isset( $setting_options['disable_limit_per_order'] ) ? $setting_options['disable_limit_per_order'] : null;
 		$notice_type 	   = isset( $setting_options['limit_per_order'] ) ? $setting_options['limit_per_order'] : 'all';
+		$cart              = function_exists( 'WC' ) ? WC()->cart : null;
+
+		if ( ! $cart instanceof \WC_Cart && function_exists( 'wc_load_cart' ) ) {
+			wc_load_cart();
+			$cart = WC()->cart;
+		}
 
 		if( isset( $disable_limit ) || is_admin() ) {
 			return TRUE;
 		} else {
-			if ( !empty( $woocommerce->cart->get_cart() ) ) {
-				foreach( $woocommerce->cart->get_cart() as $key => $val ) {
+			if ( ! $cart instanceof \WC_Cart ) {
+				return TRUE;
+			}
+
+			if ( !empty( $cart->get_cart() ) ) {
+				foreach( $cart->get_cart() as $key => $val ) {
 					if( 'product' == $notice_type ) {
 						if( ( isset( $val['free_sample'] ) && $product_id == $val['free_sample'] ) && ( $setting_options['max_qty_per_order'] <= $val['quantity'] ) ) {
 							return FALSE;
@@ -107,9 +117,19 @@ class Woo_Free_Product_Sample_Helper {
      */
 	public static function wfps_cart_total( $product_id = null, $updated_quantity = null) {
 
-		global $woocommerce;
+		$cart = function_exists( 'WC' ) ? WC()->cart : null;
+
+		if ( ! $cart instanceof \WC_Cart && function_exists( 'wc_load_cart' ) ) {
+			wc_load_cart();
+			$cart = WC()->cart;
+		}
+
+		if ( ! $cart instanceof \WC_Cart ) {
+			return 0;
+		}
+
 		$total = 0;
-		foreach( $woocommerce->cart->get_cart() as $key => $val ) {
+		foreach( $cart->get_cart() as $key => $val ) {
 			if( isset( $val['free_sample'] ) ) {
                 $quantity = $product_id && $updated_quantity ? $updated_quantity : $val['quantity'];
 				$total += $quantity;
@@ -128,6 +148,10 @@ class Woo_Free_Product_Sample_Helper {
 	 */
 	public static function wfps_product_type() {
 		global $product;
+		if ( ! $product instanceof \WC_Product ) {
+			return null;
+		}
+
 		if( $product->is_type( 'simple' ) ) {
 			return 'simple';
 		} else if( $product->is_type( 'variable' ) ) {
@@ -167,6 +191,10 @@ class Woo_Free_Product_Sample_Helper {
 	 */
 	public static function wfps_button_text() {
 		global $product;
+		if ( ! $product instanceof \WC_Product ) {
+			return apply_filters( 'woo_free_product_sample_default_label_product', esc_html__( 'Order a Sample', 'woo-free-product-sample' ) );
+		}
+
 		$product_id 		= $product->get_id();
 		$custom_label_key	= apply_filters( 'woo_free_product_sample_custom_label_key_product', 'fps_custom_label', $product );
 		$custom_label		= get_post_meta( $product_id, $custom_label_key, true );
@@ -253,10 +281,12 @@ class Woo_Free_Product_Sample_Helper {
 		$data 		= array();
 		$categories = get_terms( 'product_cat', $cat_args );
 		$inc 		= 0;
-		foreach( $categories as $cat ) {
-			$data[$inc]['ID']  		   = $cat->term_id;
-			$data[$inc]['post_title']  = $cat->name;
-			$inc++;
+		if ( is_array( $categories ) ) {
+			foreach( $categories as $cat ) {
+				$data[$inc]['ID']        = $cat->term_id;
+				$data[$inc]['post_title'] = $cat->name;
+				$inc++;
+			}
 		}
 		return $data;
 
@@ -274,8 +304,10 @@ class Woo_Free_Product_Sample_Helper {
 		$data 		= array();
 		$data[-1] 	= __( 'No Shipping Class', 'woo-free-product-sample-pro' );
 		$shipping_classes = get_terms( array( 'taxonomy' => 'product_shipping_class', 'hide_empty' => false ) );
-		foreach( $shipping_classes as $sc ) {
-			$data[$sc->term_id]  = $sc->name;
+		if ( is_array( $shipping_classes ) ) {
+			foreach( $shipping_classes as $sc ) {
+				$data[$sc->term_id]  = $sc->name;
+			}
 		}
 		return $data;
 
