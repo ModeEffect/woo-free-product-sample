@@ -325,12 +325,26 @@ class Woo_Free_Product_Sample_Public {
 
 			if ( isset( $item->legacy_values['free_sample'] ) ) {
 				$sample 		= __( 'Sample', 'woo-free-product-sample' );
+				$meta_writer    = is_object( $item ) && method_exists( $item, 'add_meta_data' );
+				$sample_price   = isset( $item->legacy_values['sample_price'] ) ? (float) $item->legacy_values['sample_price'] : 0;
 				if( get_locale() == 'de_DE' ){
-					wc_add_order_item_meta( $itemID, 'Produkt', 'MUSTERBESTELLUNG' );
-					wc_add_order_item_meta( $itemID, 'Preis', 'Wir übernehmen die Kosten für Sie!' );
+					if ( $meta_writer ) {
+						$item->add_meta_data( 'Produkt', 'MUSTERBESTELLUNG', true );
+						$item->add_meta_data( 'Preis', 'Wir übernehmen die Kosten für Sie!', true );
+						$item->save();
+					} else {
+						wc_add_order_item_meta( $itemID, 'Produkt', 'MUSTERBESTELLUNG' );
+						wc_add_order_item_meta( $itemID, 'Preis', 'Wir übernehmen die Kosten für Sie!' );
+					}
 				} else {
-					wc_add_order_item_meta( $itemID, 'PRODUCT_TYPE', $sample );
-					wc_add_order_item_meta( $itemID, 'SAMPLE_PRICE', (float)$item->legacy_values["sample_price"] );
+					if ( $meta_writer ) {
+						$item->add_meta_data( 'PRODUCT_TYPE', $sample, true );
+						$item->add_meta_data( 'SAMPLE_PRICE', $sample_price, true );
+						$item->save();
+					} else {
+						wc_add_order_item_meta( $itemID, 'PRODUCT_TYPE', $sample );
+						wc_add_order_item_meta( $itemID, 'SAMPLE_PRICE', $sample_price );
+					}
 				}
 
 			}
@@ -358,10 +372,9 @@ class Woo_Free_Product_Sample_Public {
 	 */
 	public function wfps_set_locate_template( $template, $template_name, $template_path ) {
 
-		global $woocommerce;
 		$_template = $template;
 		if ( ! $template_path ) {
-			$template_path = $woocommerce->template_url;
+			$template_path = function_exists( 'WC' ) ? WC()->template_url : '';
 		}
 
 	  	$plugin_path  = self::wfps_get_plugin_path() . '/partials/woocommerce/';
@@ -423,7 +436,16 @@ class Woo_Free_Product_Sample_Public {
 	 */
 	public function wfps_set_limit_per_order( $valid, $product_id, $quantity, $variation_id = 0, $variations = null ) {
 
-		global $woocommerce;
+		$cart = function_exists( 'WC' ) ? WC()->cart : null;
+		if ( ! $cart instanceof \WC_Cart ) {
+			if ( function_exists( 'wc_load_cart' ) ) {
+				wc_load_cart();
+			}
+		}
+		$cart = function_exists( 'WC' ) ? WC()->cart : null;
+		if ( ! $cart instanceof \WC_Cart ) {
+			return $valid;
+		}
 		$key = 'recent_add_' . ($variation_id ?: $product_id);
 
 		$now = time();
@@ -442,7 +464,7 @@ class Woo_Free_Product_Sample_Public {
 		$disable_limit 	   = isset( $setting_options['disable_limit_per_order'] ) ? $setting_options['disable_limit_per_order'] : null;
 
 		if( ! isset( $disable_limit ) ) :
-			foreach( $woocommerce->cart->get_cart() as $key => $val ) :
+			foreach( $cart->get_cart() as $key => $val ) :
 
 				if( 'product' == $notice_type ) {
 
@@ -482,6 +504,9 @@ class Woo_Free_Product_Sample_Public {
 	public function wfps_cart_update_limit_order( $passed, $cart_item_key, $values, $updated_quantity ) {
 
 		$product 		   = wc_get_product( $values['product_id'] );
+		if ( ! $product instanceof \WC_Product ) {
+			return $passed;
+		}
 		$setting_options   = \Woo_Free_Product_Sample_Helper::wfps_settings();
 		$notice_type 	   = isset( $setting_options['limit_per_order'] ) ? $setting_options['limit_per_order'] : 'all';
 		$disable_limit 	   = isset( $setting_options['disable_limit_per_order'] ) ? $setting_options['disable_limit_per_order'] : null;
@@ -661,10 +686,11 @@ class Woo_Free_Product_Sample_Public {
 	 * @param      boolean, integer, integer, array
 	 */
 	public function wfps_measurement_price_calculator_add_to_cart_validation ($valid, $product_id, $quantity, $measurements){
-		global $woocommerce;
 		$validation = $valid;
-		if ( $_REQUEST['simple-add-to-cart'] || $_REQUEST['variable-add-to-cart'] ) {
-			$woocommerce->session->set( 'wc_notices', null );
+		if ( isset( $_REQUEST['simple-add-to-cart'] ) || isset( $_REQUEST['variable-add-to-cart'] ) ) {
+			if ( function_exists( 'WC' ) && WC()->session ) {
+				WC()->session->set( 'wc_notices', null );
+			}
 			$validation = true;
 		}
 $price_calculator = 'WC_Price_Calculator_Cart';
@@ -680,7 +706,7 @@ remove_filter( 'woocommerce_get_item_data', array( $price_calculator, 'display_p
 	 * @param      integer, integer, integer, array, array
 	 */
 	public function wfps_minimum_quantity($minimum_quantity, $checking_id, $cart_item_key, $values){
-		if ( $_REQUEST['simple-add-to-cart'] || $_REQUEST['variable-add-to-cart'] )
+		if ( isset( $_REQUEST['simple-add-to-cart'] ) || isset( $_REQUEST['variable-add-to-cart'] ) )
 			$minimum_quantity = 1;
 		return $minimum_quantity;
 	}
@@ -692,7 +718,7 @@ remove_filter( 'woocommerce_get_item_data', array( $price_calculator, 'display_p
 	 * @param      integer, integer, integer, array, array
 	 */
 	public function wfps_maximum_quantity($maximum_quantity, $checking_id, $cart_item_key, $values){
-		if ( $_REQUEST['simple-add-to-cart'] || $_REQUEST['variable-add-to-cart'] )
+		if ( isset( $_REQUEST['simple-add-to-cart'] ) || isset( $_REQUEST['variable-add-to-cart'] ) )
 			$maximum_quantity = 1;
 		return $maximum_quantity;
 	}
@@ -704,7 +730,7 @@ remove_filter( 'woocommerce_get_item_data', array( $price_calculator, 'display_p
 	 * @param      integer, integer, integer, array, array
 	 */
 	public function wfps_group_of_quantity($group_of_quantity, $checking_id, $cart_item_key, $values){
-		if ( $_REQUEST['simple-add-to-cart'] || $_REQUEST['variable-add-to-cart'] )
+		if ( isset( $_REQUEST['simple-add-to-cart'] ) || isset( $_REQUEST['variable-add-to-cart'] ) )
 			$group_of_quantity = 1;
 		return $group_of_quantity;
 	}
@@ -716,15 +742,20 @@ remove_filter( 'woocommerce_get_item_data', array( $price_calculator, 'display_p
 	 * @param      integer, integer, integer, array, array
 	 */
 	public function wfps_remove_chained_products ($chained_parent_id, $quantity, $chained_variation_id, $chained_variation_data, $chained_cart_item_data, $cart_item_key){
-		global $woocommerce;
-		$cart = $woocommerce->cart->get_cart();
+		if ( function_exists( 'wc_load_cart' ) && ( ! isset( WC()->cart ) || ! WC()->cart instanceof \WC_Cart ) ) {
+			wc_load_cart();
+		}
+		if ( ! isset( WC()->cart ) || ! WC()->cart instanceof \WC_Cart ) {
+			return;
+		}
+		$cart = WC()->cart->get_cart();
 		$main_is_sample = $cart[$cart_item_key]['sample'];
 		if ($main_is_sample) {
 			$main_product_id = $cart[$cart_item_key]['product_id'];
 			if ( !get_post_meta($main_product_id, 'sample_chained_enambled', true) ) {
 				foreach ($cart as $cart_key => $cart_item) {
 					if ($cart_item['product_id'] == $chained_parent_id) {
-						$woocommerce->cart->remove_cart_item($cart_key);
+						WC()->cart->remove_cart_item($cart_key);
 						break;
 					}
 				}
@@ -764,8 +795,11 @@ remove_filter( 'woocommerce_get_item_data', array( $price_calculator, 'display_p
 	 */
 	public function wfps_cart_exclude( $exclude, $checking_id, $cart_item_key, $values ) {
 		if ( function_exists( 'WC' )) {
-			if(null === WC()->cart){
-				WC()->initialize_cart();
+			if ( function_exists( 'wc_load_cart' ) && ( ! isset( WC()->cart ) || ! WC()->cart instanceof \WC_Cart ) ) {
+				wc_load_cart();
+			}
+			if ( ! isset( WC()->cart ) || ! WC()->cart instanceof \WC_Cart ) {
+				return $exclude;
 			}
 			if ( class_exists('WC_Min_Max_Quantities') ) {
 				foreach ( WC()->cart->get_cart() as $cart_item_key => $values ) {

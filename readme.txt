@@ -2,11 +2,11 @@
 Contributors: ampmode, scottdeluzio
 Tags: free, product, sample, free-sample, free-product-sample, free-sample-product, woocommerce, dokan, e-commerce, ecommerce
 Requires at least: 4.4
-Tested up to: 6.8.3
+Tested up to: 6.9
 WC requires at least: 3.1
-WC tested up to: 10.3.4
-Requires PHP: 5.6
-Stable tag: 2.5.4
+WC tested up to: 10.8.1
+Requires PHP: 7.4
+Stable tag: 2.5.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -114,6 +114,10 @@ This section describes how to install the plugin and get it working.
 5. Save/update product details
 
 == Changelog ==
+#### 2.5.5
+* Compatibility update for current WordPress and WooCommerce releases
+* Hardened cart, order, and taxonomy lookups for current WooCommerce APIs
+
 #### 2.5.4
 * Remove specific sample metadata from formatted meta array
 
